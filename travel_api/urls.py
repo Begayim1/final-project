@@ -24,7 +24,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from main.views import PostViewSet, ReplyViewSet, CommentViewSet
+from main.views import PostViewSet, ReplyViewSet, CommentViewSet, LikeViewSet
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -43,13 +43,14 @@ router = DefaultRouter()
 router.register('posts', PostViewSet)
 router.register('replies', ReplyViewSet)
 router.register('comments', CommentViewSet)
+router.register('likes', LikeViewSet)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/docs/', schema_view.with_ui()),
     path('api/v1/', include(router.urls)),
-        path('api/v1/account/', include('account.urls')),
+    path('api/v1/account/', include('account.urls')),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

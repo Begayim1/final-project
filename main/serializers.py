@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.templatetags.rest_framework import data
 
-from main.models import Post, CodeImage, Reply, Comment
+from main.models import Post, CodeImage, Reply, Comment, Like
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -20,6 +20,7 @@ class PostSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['author'] = instance.author.email
         representation['images'] = ImageSerializer(instance.images.all(), many=True).data
+        representation['likes'] = instance.likes.count()
         action = self.context.get('action')
         if action == 'list':
             representation['replies'] = instance.replies.count()
@@ -93,3 +94,23 @@ class CommentSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return comment
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='author.email')
+
+    class Meta:
+        model = Like
+        fields = '__all__'
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user = request.user
+        post = validated_data.get('post')
+
+        if Like.objects.filter(user=user, post=post):
+            like = Like.objects.get(user=user, post=post)
+            return like
+
+        like = Like.objects.create(user=user, **validated_data)
+        return like
