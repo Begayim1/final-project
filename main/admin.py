@@ -14,4 +14,7 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(Comment)
 admin.site.register(Reply)
+admin.site.register(RatingStar)
+admin.site.register(Rating)
+admin.site.register(Like)
 

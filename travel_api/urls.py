@@ -24,11 +24,12 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from main.views import PostViewSet, ReplyViewSet, CommentViewSet, LikeViewSet
+from main import views
+from main.views import PostViewSet, ReplyViewSet, CommentViewSet, LikeViewSet, AddStarRatingView
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="StackOverFlow12 API",
+      title="TravelBlog",
       default_version='v1',
       description="Hello from Python12",
       terms_of_service="https://www.google.com/policies/terms/",
@@ -43,7 +44,10 @@ router = DefaultRouter()
 router.register('posts', PostViewSet)
 router.register('replies', ReplyViewSet)
 router.register('comments', CommentViewSet)
+router.register('rating', AddStarRatingView)
 router.register('likes', LikeViewSet)
+router.register('favorites', LikeViewSet)
+
 
 
 urlpatterns = [

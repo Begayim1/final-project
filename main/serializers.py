@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.templatetags.rest_framework import data
 
-from main.models import Post, CodeImage, Reply, Comment, Like
+from main.models import Post, CodeImage, Reply, Comment, Like, Rating
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -94,6 +94,30 @@ class CommentSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return comment
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    """Добавление рейтинга пользователем"""
+    author = serializers.ReadOnlyField(source='author.email')
+
+    class Meta:
+        model = Rating
+        fields = '__all__' #('star', 'post')
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        email = request.user
+        post = validated_data.get('product')
+
+        if Rating.objects.filter(author=email, post=post):
+            rating = Rating.objects.get(author=email, post=post)
+            return rating
+
+        rating = Rating.objects.create(author=request.user, **validated_data)
+        return rating
+
+
+
 
 
 class LikeSerializer(serializers.ModelSerializer):
